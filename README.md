@@ -1,4 +1,4 @@
-# `EvaluateRobustness`: Evaluate Robustness to Dataset Shifts
+# `ParametricRobustnessEvaluation`: Evaluate Robustness to Dataset Shifts
 This package implements the second-order approximation described in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](). 
 
 
