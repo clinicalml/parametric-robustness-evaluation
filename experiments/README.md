@@ -48,23 +48,24 @@ Reproducing the CausalGAN experiment takes a substantial amount of time, primari
 ## Downloading data
 First, download the data using the [kaggle API](https://github.com/Kaggle/kaggle-api). 
 ```bash
+cd experiments/celeb_gan
 mkdir -p CausalGAN/data/data/celebA
 cd CausalGAN/data/data/celebA
 kaggle datasets download jessicali9530/celeba-dataset --unzip
-cd ../../../..
+cd ../../../../../..
 ```
 
 The [CausalGAN](https://github.com/mkocaoglu/CausalGAN) code is (unfortunately) in Python 2, while our code is Python 3. To manage, we have two separate conda environments. To install them, run
 ```bash
-conda env create -f conda_environments/environment_CausalGAN.yml
-conda env create -f conda_environments/environment_shift_gradient.yml
+conda env create -f experiments/celeb_gan/conda_environments/environment_CausalGAN.yml
+conda env create -f experiments/celeb_gan/conda_environments/environment_shift_gradient.yml
 ```
 
 ## Fitting GAN
 Now, to train the CausalGAN model, run
 ```bash
 conda activate CausalGAN
-cd CausalGAN
+cd experiments/celeb_gan/CausalGAN
 python main.py --causal_model big_causal_graph --is_pretrain True --model_type began --is_train True --num_iter 250000
 ```
 
@@ -73,6 +74,6 @@ The GAN is saves at a `LOAD_PATH` which looks something like `CausalGAN/logs/cel
 
 Then a model can be trained, by running
 ```bash
-bash run.sh
+bash experiments/celeb_gan/run.sh
 ```
 The csv files containing results are saved in `experiments/celeb_gan/results/default_experiment` (unless `FOLDER_NAME` is changed in `run.sh`.)

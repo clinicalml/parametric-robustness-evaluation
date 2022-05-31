@@ -7,6 +7,7 @@ import os
 import pandas as pd
 debug = debugger.Pdb().set_trace
 from main import get_trainer, main
+import argparse
 import tensorflow as tf
 from generate_training_data import CPD_0, generate_data
 from PIL import Image
@@ -87,11 +88,16 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=No
     labels['file_path'] = ["image_{}.png".format("%06d" % i) for i in range(len(labels))]
     labels.to_csv(os.path.join(path, 'labels.csv'), index=False)
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_random', type=int, default=400)
+parser.add_argument('--N', type=int, default=500)
+parser.add_argument('--M', type=int, default=1)
 
 if __name__ == "__main__":
-    N = 500
-    M = 1
-    n_random = 400
+    args = parser.parse_known_args()[0]
+    N = args.N
+    M = args.M
+    n_random = args.n_random
     
     # Initialize model
     trainer = get_trainer()
