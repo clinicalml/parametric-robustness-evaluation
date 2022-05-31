@@ -1,2 +1,4 @@
 *.DS_Store
 *.pyc
+experiments/CausalGAN/data
+experiments/CausalGAN/logs

@@ -74,15 +74,15 @@ def convert_np_to_torch(x):
     else:
         return x
 
-def gaussian_sufficient_statistic(x):
+def gaussian_sufficient_statistic(W):
     """
     Implement the sufficient statistic of a Gaussian random variable with known mean
     """
-    if x.dim() == 1:
-        sigma = torch.sqrt(torch.var(x))
+    if W.dim() == 1:
+        sigma = torch.sqrt(torch.var(W))
     else:
-        sigma = torch.sqrt(torch.var(x, dim=0, keepdim=True))
-    return x/sigma
+        sigma = torch.sqrt(torch.var(W, dim=0, keepdim=True))
+    return W/sigma
 
 class ShiftLossEstimator(torch.nn.Module):
     """
