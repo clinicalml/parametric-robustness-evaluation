@@ -1,7 +1,6 @@
 # `ParametricRobustnessEvaluation`: Evaluate Robustness to Dataset Shifts
 This package implements the second-order approximation described in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](). 
 
-
 ## Use
 
 ### Inputs 
@@ -40,3 +39,17 @@ Alternatively, to estimate the loss under an arbitrary shift `delta` of magnitud
 shift_strength = 2
 estimated_loss_under_shift = sle.forward(loss_0, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
 ```
+
+## Advanced use
+### Conditional shift
+To consider a shift in a conditional distribution `W|Z`, pass an input `Z`:
+- `Z`: a numpy or torch array of shape `(n,d)` containing the parents of the shifting variable. Currently, only binary conditioning variables are supported. 
+
+### Non-linear shift
+The default shift function is `s(Z; delta) = delta`. However, for more involved shifts, one can pass functions `s_grad` and `s_hess` to the `ShiftLossEstimator` class (not the forward function),  which return the gradient and Hessian of `s` when differentiated with respect to `delta`.
+- `s_grad`: Function which takes as input `Z` and outputs a `(n,d_delta,d_T)` dimensional array, for each sample point outputting the `(d_delta, d_T)` dimensional derivative of `s`, where `d_delta` is the number of parameters and `d_T` is the dimension of the sufficient statistic. For each row `(n,)`, `s_grad
+- `s_hess`: Function which takes as input `Z` and outputs a `(n,d_delta,d_delta,d_T)` dimensional array, for each sample point outputting the `(d_delta, d_delta, d_T)` dimensional double derivative of `s` where `d_delta` is the number of parameters and `d_T` is the dimension of the sufficient statistic. 
+
+### Cases when worst-case loss is larger
+When finding a worst-case loss, the default setting is that a larger loss is a worst case scenario. For some loss functions, such as accuracy, a smaller value of the loss function is a worse scenario. In that case, one can set `worst_case_is_larger_loss=False`. 
+- `worst_case_is_larger_loss`: bool (default = False) indicating whether adversarial shift increases loss (`True`) or decreases loss (`False`).
