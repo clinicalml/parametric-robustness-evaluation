@@ -25,15 +25,16 @@ For example, consider a marginal mean shift in a Gaussian variable `W`.
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from source.shift_gradients import ShiftLossEstimator
-sle = ShiftedLossEstimator()
+sle = ShiftLossEstimator()
 
 # Generate data and fit model
 n = 100
 W = np.random.normal(size=(n,1))
 Y = np.sin(W) + W**2 + np.random.normal(size=(n,1))
-model = LinearRegression().fit(X, Y)
+model = LinearRegression().fit(W, Y)
 # Evaluate loss per data point 
-loss = (Y - model.predict(X))**2
+loss = (Y - model.predict(W))**2
+
 ```
 
 We can now estimate the loss in a distribution where the mean of W shifts by 2.

@@ -67,7 +67,10 @@ def convert_np_to_torch(x):
     Convert a numpy array to a torch tensor.
     """
     if isinstance(x, np.ndarray):
-        return torch.from_numpy(x)
+        return torch.from_numpy(x).float()
+    # Check if x is a float or int
+    elif isinstance(x, (int, float)):
+        return torch.tensor(x).float()
     else:
         return x
 
@@ -107,9 +110,14 @@ class ShiftLossEstimator(torch.nn.Module):
             else: 
                 Z = [Z]
         if not delta is None:
-            if isinstance(delta, list):
+            if not isinstance(delta, list):
+                delta = [delta]
+            delta = [convert_np_to_torch(d) for d in delta]
+            if len(delta) > 1:
                 delta = torch.cat(delta, axis=0)
-
+            else:
+                delta = torch.tensor(delta)
+            delta = delta.view(-1, 1).float()
         assert len(sufficient_statistic) == len(W) == len(Z)
 
 
