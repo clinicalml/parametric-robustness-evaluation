@@ -1,7 +1,13 @@
-# `ParametricRobustnessEvaluation`: Evaluate Robustness to Dataset Shifts
-This package implements the second-order approximation described in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](). 
+# Evaluating Robustness to Dataset Shift via Parametric Robustness Sets
+This repository consists of two components: First, code to reproduce experiments and figures in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](), and second, a small python package which implements the methods described in the paper.
 
-## Use
+## Reproducing paper figures and experiments
+The code for reproducing the experiments and figures in the paper are in the folder [experiments](experiments), and details are provided in the corresponding [README.md](experiments/README.md) file. 
+
+**Acknowledgements**: To construct our simulation setup in the CelebA experiments, we make use of a (slightly) modified version of the `CausalGAN` code, taken from [mkocaoglu/CausalGAN](https://github.com/mkocaoglu/CausalGAN). You can find the original CausalGAN paper [here](https://arxiv.org/abs/1709.02023).  Our modified version can be found in the `CausalGAN` directory, along with helper scripts we used in our experiments.
+
+## Usage of `shift_gradients` package
+In `source/shift_gradients.py`, we include generic methods that implement the second-order approximation method described in the paper, and which uses the [`trustregion`](https://github.com/lindonroberts/trust-region) package to solve for the worst-case shift of bounded strength.
 
 ### <a name="input-section"></a> Inputs 
 To use on a data set with `n` samples, we assume the following input
@@ -40,10 +46,6 @@ shift_strength = 2
 estimated_loss_under_shift = sle.forward(loss_0, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
 ```
 
-## Reproducing paper figures and experiments
-The code for reproducing the experiments and figures in the paper are in the folder [experiments](experiments), and details are provided in the [EXPERIMENTS.md](experiments/EXPERIMENTS.md) file. 
-
-## Advanced use
 ### Conditional shift
 To consider a shift in a conditional distribution `W|Z`, pass an input `Z`:
 - `Z`: a numpy or torch array of shape `(n,d)` containing the parents of the shifting variable. Currently, only binary conditioning variables are supported. 
