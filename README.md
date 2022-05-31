@@ -40,6 +40,9 @@ shift_strength = 2
 estimated_loss_under_shift = sle.forward(loss_0, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
 ```
 
+## Reproducing paper figures and experiments
+The code for reproducing the experiments and figures in the paper are in the folder [experiments](experiments), and details are provided in the [EXPERIMENTS.md](experiments/EXPERIMENTS.md) file. 
+
 ## Advanced use
 ### Conditional shift
 To consider a shift in a conditional distribution `W|Z`, pass an input `Z`:
