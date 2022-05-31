@@ -30,10 +30,9 @@ model = LinearRegression().fit(X, Y)
 loss = (Y - model.predict(X))**2
 
 # Estimate loss for a fixed shift delta, e.g. a shift in mean of X by 2
-#TODO: Add sufficient_statistic
-estimated_loss_under_delta = sle.forward(loss_0, W, delta=2.0)
+estimated_loss_under_delta = sle.forward(loss_0, W, sufficient_statistic='gaussian', delta=2.0)
 ```
 Alternatively, to estimate the loss under an arbitrary shift `delta` of magnitude smaller than `shift_strength`, 
 ```Python
-estimated_loss_under_shift = sle.forward(loss_0, W, shift_strength=shift_strength)
+estimated_loss_under_shift = sle.forward(loss_0, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
 ```
