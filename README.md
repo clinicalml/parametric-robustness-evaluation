@@ -4,7 +4,7 @@ This repository consists of two components: First, code to reproduce experiments
 ## Reproducing paper figures and experiments
 The code for reproducing the experiments and figures in the paper are in the folder [experiments](experiments), and details are provided in the corresponding [README.md](experiments/README.md) file. 
 
-**Acknowledgements**: To construct our simulation setup in the CelebA experiments, we make use of a (slightly) modified version of the `CausalGAN` code, taken from [mkocaoglu/CausalGAN](https://github.com/mkocaoglu/CausalGAN). You can find the original CausalGAN paper [here](https://arxiv.org/abs/1709.02023).  Our modified version can be found in the `CausalGAN` directory, along with helper scripts we used in our experiments.
+**Acknowledgements**: To construct our simulation setup in the CelebA experiments, we make use of a (slightly) modified version of the `CausalGAN` code, taken from [mkocaoglu/CausalGAN](https://github.com/mkocaoglu/CausalGAN). You can find the original CausalGAN paper [here](https://arxiv.org/abs/1709.02023).  Our modified version can be found in the `CausalGAN` [subfolder](experiments/celeb_gan/CausalGAN), along with helper scripts we used in our experiments.
 
 ## Usage of `shift_gradients` package
 In `source/shift_gradients.py`, we include generic methods that implement the second-order approximation method described in the paper, and which uses the [`trustregion`](https://github.com/lindonroberts/trust-region) package to solve for the worst-case shift of bounded strength.
@@ -38,12 +38,12 @@ loss = (Y - model.predict(X))**2
 
 We can now estimate the loss in a distribution where the mean of W shifts by 2.
 ```Python
-estimated_loss_under_delta = sle.forward(loss_0, W, sufficient_statistic='gaussian', delta=2.0)
+estimated_loss_under_delta = sle.forward(loss, W, sufficient_statistic='gaussian', delta=2.0)
 ```
 Alternatively, to estimate the loss under an arbitrary shift `delta` of magnitude smaller than `shift_strength`, 
 ```Python
 shift_strength = 2
-estimated_loss_under_shift = sle.forward(loss_0, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
+estimated_loss_under_shift = sle.forward(loss, W, sufficient_statistic='gaussian', shift_strength=shift_strength)
 ```
 
 ### Conditional shift

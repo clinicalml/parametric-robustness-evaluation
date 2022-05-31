@@ -95,10 +95,11 @@ class ShiftLossEstimator(torch.nn.Module):
     
     def forward(self, loss_0, W, sufficient_statistic, Z=None, delta=None, shift_strength=1.0, use_stored_sg=False, worst_case_is_larger_loss=True):
         # If only single elements passed, convert to list
-        if not isinstance(sufficient_statistic, list):
-            sufficient_statistic = [sufficient_statistic]
         if not isinstance(W, list):
             W = [W]
+        if not isinstance(sufficient_statistic, list):
+            # If only a single function/string is passed, convert to list of same length as W
+            sufficient_statistic = [sufficient_statistic] * len(W)
         if not isinstance(Z, list):
             # If only a single None is passed, convert to list of None's of same length as W
             if Z is None:
