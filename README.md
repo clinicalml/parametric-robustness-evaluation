@@ -3,7 +3,7 @@ This package implements the second-order approximation described in [Evaluating 
 
 ## Use
 
-### Inputs 
+### <a name="input-section"></a> Inputs 
 To use on a data set with `n` samples, we assume the following input
 - `loss`: a numpy or torch array of shape `(n,)` containing prediction loss of each individual dataset. 
     - e.g. to evaluate accuracy under a shift, define `loss = 1.0*(Y == model(X))` and to evaluate the MSE define `loss = (Y - model(X))**2`.
@@ -53,3 +53,6 @@ The default shift function is `s(Z; delta) = delta`. However, for more involved 
 ### Cases when worst-case loss is larger
 When finding a worst-case loss, the default setting is that a larger loss is a worst case scenario. For some loss functions, such as accuracy, a smaller value of the loss function is a worse scenario. In that case, one can set `worst_case_is_larger_loss=False`. 
 - `worst_case_is_larger_loss`: bool (default = False) indicating whether adversarial shift increases loss (`True`) or decreases loss (`False`).
+
+### Shifts in multiple variables
+To handle shifts in multiple variables `W_1, ..., W_m`, pass a list `W = [W_1, ..., W_m]` where each `W_i` is a `(n,)` dimensional array and a list `sufficient_statistic = [ss_1, ..., ss_m]` where each `ss_i` is either a string or function (see [Inputs](#input-section) above).
