@@ -55,4 +55,5 @@ When finding a worst-case loss, the default setting is that a larger loss is a w
 - `worst_case_is_larger_loss`: bool (default = False) indicating whether adversarial shift increases loss (`True`) or decreases loss (`False`).
 
 ### Shifts in multiple variables
-To handle shifts in multiple variables `W_1, ..., W_m`, pass a list `W = [W_1, ..., W_m]` where each `W_i` is a `(n,)` dimensional array and a list `sufficient_statistic = [ss_1, ..., ss_m]` where each `ss_i` is either a string or function (see [Inputs](#input-section) above).
+To handle simultaneous shifts in multiple variables `W_1, ..., W_m`, pass a list `W = [W_1, ..., W_m]` where each `W_i` is a `(n,)` dimensional array and a list `sufficient_statistic = [ss_1, ..., ss_m]` where each `ss_i` is either a string or function (see [Inputs](#input-section) above). 
+If considering conditional shifts, one can additionally pass a list `Z = [Z_1, ..., Z_m]`, where each `Z_i` is a `(n, d_i)` dimensional array of conditioning variables.
