@@ -23,22 +23,6 @@ plt.rc('ytick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-
-def make_legend_arrow(legend, orig_handle, xdescent, ydescent, width, height,
-                      fontsize):
-    p = mpatches.FancyArrow(0,
-                            0.5 * height,
-                            width,
-                            0,
-                            length_includes_head=True,
-                            head_width=0.75 * height)
-    return p
-
-
-handler_map = {
-    mpatches.FancyArrow: HandlerPatch(patch_func=make_legend_arrow),
-}
-
 colors = sns.color_palette('colorblind')
 
 fpath = './figs'
@@ -229,12 +213,9 @@ ax.plot(max_est_quad[0],
         marker='*',
         label='Est. Worst-Case')
 ax.legend(loc='upper right')
-# leg = ax.legend(bbox_to_anchor=(-0.25, 1))
-# leg.set_in_layout(False)
 plt.tight_layout()
 plt.savefig(f'{fpath}/labtest_delta_shift_onlyOL_quad_est.pdf')
 
-# Only plot the last model
 plot_names = ['Loss of f(O, L)']
 plot_df = orig_plot_df.query("Model in @plot_names")
 

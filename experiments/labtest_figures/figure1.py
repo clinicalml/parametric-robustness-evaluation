@@ -6,10 +6,9 @@ import numpy as np  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import seaborn as sns  # type: ignore
 import pandas as pd  # type: ignore
-import sklearn  # type: ignore
-import itertools
 from sklearn import linear_model as lm  # type: ignore
-from mpl_toolkits import mplot3d
+from mpl_toolkits import mplot3d  # type: ignore
+from matplotlib import cm
 
 SMALL_SIZE = 20
 MEDIUM_SIZE = 30
@@ -56,17 +55,6 @@ class DataGenerator(object):
         prob_y = sigmoid(self.age * gamma - gamma / 2)
         self.disease = self.rng.binomial(1, prob_y)
 
-    # def _simulate_symptoms(self):
-    #     for var in [self.age, self.disease]:
-    #         assert var is not None
-    #
-    #     intercept = -1
-    #     coef_age = 0.5
-    #     coef_disease = 0.5
-    #     prob_symptoms = sigmoid(intercept + self.disease * coef_disease +
-    #                             self.age * coef_age)
-    #     self.symptoms = self.rng.binomial(1, prob_symptoms)
-
     def _simulate_order(self, dy0=0, dy1=0):
         for var in [self.age, self.disease]:
             assert var is not None
@@ -74,14 +62,11 @@ class DataGenerator(object):
         intercept = -1
         coef_age = 0.5
         coef_disease = 2
-        # coef_symptom = 0.5
 
         shift = dy0 * (1 - self.disease) + dy1 * self.disease
 
         prob_order = sigmoid(intercept + self.disease * coef_disease +
-                             self.age * coef_age +
-                             # self.symptoms * coef_symptom +
-                             shift)
+                             self.age * coef_age + shift)
         self.order = self.rng.binomial(1, prob_order)
 
     def _simulate_test_result(self):
@@ -116,7 +101,6 @@ class DataGenerator(object):
         self.data = {
             'Age': self.age,
             'Disease': self.disease,
-            # 'Symptoms': self.symptoms,
             'Order': self.order,
             'TestResult': self.test_result
         }
@@ -134,10 +118,6 @@ def select_Xy(data, order=True, subset=True):
         features = ['Age', 'Order', 'TestResult']
     else:
         features = ['Age', 'Order']
-    # if order:
-    #     features = ['Age', 'Symptoms', 'Order', 'TestResult']
-    # else:
-    #     features = ['Age', 'Symptoms', 'Order']
 
     if subset:
         data = data.query('Order == @order')
@@ -192,7 +172,7 @@ model_d = train_components(train_data)
 print(f'Testing rate: {train_data["Order"].mean()}')
 
 ##############################################################################
-# 3-dimensional plotting !!!!
+# 3-dimensional plotting
 ##############################################################################
 
 len_grid = 100
@@ -217,8 +197,6 @@ for i in range(len_grid):
 test_data = gen.generate_data(dy0_order=0, dy1_order=0, n=10000, seed=1)
 preds = predict_proba(test_data, model_d)
 origin_loss = np.mean(loss_func_unit(test_data[label], preds))
-
-from matplotlib import cm
 
 fig, ax = plt.subplots(1, 1, figsize=(10, 10), subplot_kw={"projection": "3d"})
 ax.plot_surface(Y, X, Z, cmap=cm.coolwarm, alpha=0.9)
