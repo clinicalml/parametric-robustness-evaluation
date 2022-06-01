@@ -1,4 +1,5 @@
 *.DS_Store
 *.pyc
-experiments/CausalGAN/data
-experiments/CausalGAN/logs
+experiments/celeb_gan/CausalGAN/data
+experiments/celeb_gan/CausalGAN/logs
+experiments/celeb_gan/data
