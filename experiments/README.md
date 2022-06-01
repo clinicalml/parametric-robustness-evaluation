@@ -76,4 +76,4 @@ Then a model can be trained, by running
 ```bash
 bash experiments/celeb_gan/run.sh
 ```
-The csv files containing results are saved in `experiments/celeb_gan/results/default_experiment` (unless `FOLDER_NAME` is changed in `run.sh`.)
+The csv files containing results are saved in `experiments/celeb_gan/results`.
