@@ -1,5 +1,5 @@
 # Evaluating Robustness to Dataset Shift via Parametric Robustness Sets
-This repository consists of two components: First, code to reproduce experiments and figures in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](), and second, a small python package which implements the methods described in the paper.
+This repository consists of two components: First, code to reproduce experiments and figures in [Evaluating Robustness to Dataset Shift via Parametric Robustness Sets](https://arxiv.org/abs/2205.15947), and second, a small python package which implements the methods described in the paper.
 
 ## Reproducing paper figures and experiments
 The code for reproducing the experiments and figures in the paper are in the folder [experiments](experiments), and details are provided in the corresponding [README.md](experiments/README.md) file. 
