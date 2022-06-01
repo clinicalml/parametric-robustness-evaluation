@@ -17,10 +17,10 @@ from main import get_trainer, main
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
-DATA_PATH = '../data/celeb_gan/train_dist'
-PATH_TRAIN = '../data/celeb_gan/ipw_taylor_comparison/'
-PATH_TEST = '../data/celeb_gan/ipw_taylor_test_data/'
-SAVE_PATH = '../experiments/celeb_gan/compare_ipw_taylor_optim'
+DATA_PATH = '../data/train_dist'
+PATH_TRAIN = '../data/ipw_taylor_comparison/'
+PATH_TEST = '../data/ipw_taylor_test_data/'
+SAVE_PATH = '../compare_ipw_taylor_optim'
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))

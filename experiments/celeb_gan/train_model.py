@@ -9,10 +9,9 @@ import argparse
 import torch
 import copy
 
-IMG_PATH = 'data/celeb_gan/train_dist/images'
-META_PATH ='data/celeb_gan/train_dist'
+IMG_PATH = 'experiments/celeb_gan/data/train_dist/images'
+META_PATH ='experiments/celeb_gan/data/train_dist'
 MODEL_PATH = 'experiments/celeb_gan/models/resnet_finetuned.pt'
-# PRED_PATH = 'experiments/celeb_gan/models'
 
 # Setups
 batch_size = 256
@@ -23,7 +22,7 @@ num_classes = 2
 feature_extract = True
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--folder_name', type=str, default='default')
+parser.add_argument('--folder_name', type=str, default='default_experiment')
 parser.add_argument('--num_epochs', type=int, default=25)
 
 

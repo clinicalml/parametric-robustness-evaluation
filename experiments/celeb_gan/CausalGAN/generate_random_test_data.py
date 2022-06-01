@@ -8,7 +8,7 @@ debug = debugger.Pdb().set_trace
 from main import get_trainer, main
 from generate_training_data import CPD_0, shift, generate_data
 
-PATH = '../data/celeb_gan/random_test_dist/'
+PATH = '../data/random_test_dist/'
 
 def make_shift(cpd, children, deltas, parents=None):
     if parents is None:

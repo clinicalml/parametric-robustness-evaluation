@@ -95,10 +95,10 @@ def get_taylor(data, cpd):
     return E_taylor, delta_taylor
 
 # Set paths
-DATA_PATH = 'data/celeb_gan/ipw_taylor_comparison'
+DATA_PATH = 'experiments/celeb_gan/data/ipw_taylor_comparison'
 MODEL_PATH = 'experiments/celeb_gan/models/resnet_finetuned.pt'
 SAVE_PATH = 'experiments/celeb_gan/compare_ipw_taylor_optim'
-TRAIN_PATH = 'data/celeb_gan/train_dist/'
+TRAIN_PATH = 'experiments/celeb_gan/data/train_dist/'
 
 
 parser = argparse.ArgumentParser()

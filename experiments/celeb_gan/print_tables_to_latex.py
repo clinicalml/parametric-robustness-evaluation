@@ -37,7 +37,7 @@ print(f"{df['elapsed_taylor'].mean():.3f} s")
 if os.path.isfile(os.path.join("experiments/celeb_gan/results", FOLDER_NAME,"simultaneous_deltas_individual.csv")):
     df = pd.read_csv(os.path.join("experiments/celeb_gan/results", FOLDER_NAME,"simultaneous_deltas_individual.csv"))
 
-    TRAIN_PATH = 'data/celeb_gan/train_dist/'
+    TRAIN_PATH = 'experiments/celeb_gan/data/train_dist/'
     with open(os.path.join(TRAIN_PATH, 'CPD_0.pkl'), 'rb') as f:
         CPD_0 = pickle.load(f)
 

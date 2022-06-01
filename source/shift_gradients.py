@@ -1,3 +1,4 @@
+from pandas import infer_freq
 import torch
 import numpy as np
 import trustregion
@@ -68,11 +69,11 @@ def convert_np_to_torch(x):
     """
     if isinstance(x, np.ndarray):
         return torch.from_numpy(x).float()
-    # Check if x is a float or int
+    # Check if x is a float or int (but neither numpy nor torch)
     elif isinstance(x, (int, float)):
         return torch.tensor(x).float()
     else:
-        return x
+        return x.float()
 
 def gaussian_sufficient_statistic(W):
     """
@@ -125,6 +126,16 @@ class ShiftLossEstimator(torch.nn.Module):
         loss_0 = convert_np_to_torch(loss_0)
         W = [convert_np_to_torch(w) for w in W]
         Z = [convert_np_to_torch(z) for z in Z]
+        
+        # Check that each element in Z is a binary matrix
+        for z in Z:
+            if z is not None:
+                # if len(torch.unique(z)) > 2:
+                close_1 = torch.isclose(z, torch.ones(z.shape))
+                close_0 = torch.isclose(z, torch.zeros(z.shape))
+                if not all(torch.logical_or(close_1, close_0)):
+                    raise ValueError('Z must be a binary matrix containing only 0 and 1')
+                
 
         # If strings are passed for the sufficient_statistic, convert to functions
         for i, ss in enumerate(sufficient_statistic):

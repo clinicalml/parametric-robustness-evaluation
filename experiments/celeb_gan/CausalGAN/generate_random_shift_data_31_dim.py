@@ -14,8 +14,8 @@ from PIL import Image
 import glob
 import pickle
 
-DATA_PATH = '../data/celeb_gan/train_dist'
-PATH = '../data/celeb_gan/random_test_dist_31/'
+DATA_PATH = '../data/train_dist'
+PATH = '../data/random_test_dist_31/'
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))

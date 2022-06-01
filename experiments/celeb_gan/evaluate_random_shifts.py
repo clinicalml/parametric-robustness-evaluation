@@ -7,9 +7,10 @@ from experiments.celeb_gan.estimate_worst_case_shifts import eval_model, get_dat
 import argparse
 
 # Set paths
-DATA_PATH = 'data/celeb_gan/random_test_dist'
-DATA_PATH_31 = 'data/celeb_gan/random_test_dist_31'
+DATA_PATH = 'experiments/celeb_gan/data/random_test_dist'
+DATA_PATH_31 = 'experiments/celeb_gan/data/random_test_dist_31'
 MODEL_PATH = 'experiments/celeb_gan/models/resnet_finetuned.pt'
+RESULTS_PATH = 'experiments/celeb_gan/results/'
 SAVE_PATH = 'experiments/celeb_gan/plots/'
 LOAD_OURS_PATH = 'experiments/celeb_gan/compare_ipw_taylor_optim'
 
@@ -36,6 +37,7 @@ if __name__ == '__main__':
     accs = [eval_model(model, get_dataloader(os.path.join(data_path, 'random_{}'.format(j)))) for j in tqdm(range(n_random))]
     df = pd.DataFrame(accs, columns=['Loss'])
     df.to_csv(os.path.join(SAVE_PATH, f'random_acc{str(31) if args.use_31 else ""}.csv'), index=False)
+    df.to_csv(os.path.join(RESULTS_PATH, 'figure5_left.csv'), index=False)
     print(df.round(3))
 
     # Print the worst-case random delta

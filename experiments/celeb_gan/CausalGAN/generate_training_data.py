@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import os
 import tensorflow as tf
+import argparse
 import glob
 from tqdm import tqdm
 from IPython.core import debugger
@@ -12,7 +13,7 @@ import pickle
 from main import get_trainer, main
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-PATH = '../data/celeb_gan/train_dist/'
+PATH = '../data/train_dist/'
 
 # Base conditional probabilities
 CPD_0 =  {
@@ -91,9 +92,15 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path):
     labels.to_csv(os.path.join(path, 'labels.csv'), index=False)
 
 
-N = 500
-M = 40
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--N', type=int, default=500)
+parser.add_argument('--M', type=int, default=40)
+
 if __name__ == "__main__":
+    args = parser.parse_known_args()[0]
+    N = args.N
+    M = args.M
     # First delete old images
     files = glob.glob(PATH + '*.png')
     for f in files:

@@ -8,10 +8,11 @@ import pickle
 from experiments.celeb_gan.estimate_worst_case_shifts import eval_model, get_dataloader
 
 # Set paths
-PATH_TEST   = 'data/celeb_gan/ipw_taylor_test_data/'
+PATH_TEST   = 'experiments/celeb_gan/data/ipw_taylor_test_data/'
 SAVE_PATH   = 'experiments/celeb_gan/compare_ipw_taylor_optim'
 MODEL_PATH  = 'experiments/celeb_gan/models/resnet_finetuned.pt'
-TRAIN_PATH = 'data/celeb_gan/train_dist/'
+TRAIN_PATH = 'experiments/celeb_gan/data/train_dist/'
+RESULTS_PATH = 'experiments/celeb_gan/results/'
 
 with open(os.path.join(TRAIN_PATH, 'cpd.pkl'), 'rb') as f:
     CPD_0 = pickle.load(f)
@@ -37,9 +38,11 @@ accs_taylor = [eval_model(model, get_dataloader(os.path.join(PATH_TEST, 'taylor_
 df['E_ipw actual'] = accs_ipw
 df['E_taylor actual'] = accs_taylor
 df.to_csv(os.path.join(SAVE_PATH, 'results_with_ground_truth.csv'), index=False)
+df.to_csv(os.path.join(RESULTS_PATH, 'figure5_right.csv'), index=False)
 
 # Save first row for table
 df.loc[0,:].to_csv(os.path.join(SAVE_PATH, 'results_with_ground_truth_first.csv'))
+df.loc[0,:].to_csv(os.path.join(RESULTS_PATH, 'table1_right.csv'))
 
 # Print the worst-case random delta
 print(f"IPW error: {(df['E_ipw actual'] - df['E_ipw']).abs().mean():.3f}")
