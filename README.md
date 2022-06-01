@@ -12,7 +12,7 @@ In `source/shift_gradients.py`, we include generic methods that implement the se
 ### <a name="input-section"></a> Inputs 
 To use on a data set with `n` samples, we assume the following input
 - `loss`: a numpy or torch array of shape `(n,)` containing prediction loss of each individual dataset. 
-    - e.g. to evaluate accuracy under a shift, define `loss = 1.0*(Y == model(X))` and to evaluate the MSE define `loss = (Y - model(X))**2`.
+    - e.g. to evaluate accuracy under a shift, define `loss = 1.0*(Y == model(X))`. To evaluate the MSE define `loss = (Y - model(X))**2`.
 - `W`: a numpy or torch array of shape `(n,d)` containing the variable(s) that shift. 
 - `sufficient_statistic`: Either of
     1. a string in `['gaussian', 'binary', 'binomial', 'poisson', 'exponential']`, which loads the relevant sufficient statistic. 
