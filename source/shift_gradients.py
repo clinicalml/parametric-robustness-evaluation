@@ -65,13 +65,16 @@ def cond_mean_given_binary(W, Z):
 
 def convert_np_to_torch(x):
     """
-    Convert a numpy array to a torch tensor.
+    Convert a numpy array to a torch tensor, unless it is None, in which case
+    return None.
     """
     if isinstance(x, np.ndarray):
         return torch.from_numpy(x).float()
     # Check if x is a float or int (but neither numpy nor torch)
     elif isinstance(x, (int, float)):
         return torch.tensor(x).float()
+    elif x is None:
+        return x
     else:
         return x.float()
 
@@ -133,7 +136,7 @@ class ShiftLossEstimator(torch.nn.Module):
                 # if len(torch.unique(z)) > 2:
                 close_1 = torch.isclose(z, torch.ones(z.shape))
                 close_0 = torch.isclose(z, torch.zeros(z.shape))
-                if not all(torch.logical_or(close_1, close_0)):
+                if not all(torch.logical_or(close_1, close_0).flatten()):
                     raise ValueError('Z must be a binary matrix containing only 0 and 1')
                 
 

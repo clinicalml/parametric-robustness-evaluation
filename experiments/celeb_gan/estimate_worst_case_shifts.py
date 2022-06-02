@@ -9,6 +9,9 @@ from torch.utils.data import DataLoader
 import experiments.celeb_gan.ipw_functions as ipw
 from source.shift_gradients import ShiftLossEstimator
 import argparse
+import numpy as np  # type: ignore
+import time
+
 
 def eval_model(model, dataloader, device='cuda', raw_output=False):
     acc       = torch.empty((0, 1)).to(device)
