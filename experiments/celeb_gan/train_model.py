@@ -1,17 +1,18 @@
-from torch.utils.data import DataLoader
-from experiments.celeb_gan.preprocessing import CelebADataset
-import torchvision.models as models
-from tqdm import tqdm
-from torch import nn
 import time
 import os
 import argparse
-import torch
 import copy
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+import torchvision.models as models
+from tqdm import tqdm
+from experiments.celeb_gan.preprocessing import CelebADataset
 
 IMG_PATH = 'experiments/celeb_gan/data/train_dist/images'
-META_PATH ='experiments/celeb_gan/data/train_dist'
-MODEL_PATH = 'experiments/celeb_gan/models/resnet_finetuned.pt'
+META_PATH = 'experiments/celeb_gan/data/train_dist'
+MODEL_DIR = 'experiments/celeb_gan/models'
+MODEL_PATH = f'{MODEL_DIR}/resnet_finetuned.pt'
 
 # Setups
 batch_size = 256
