@@ -75,9 +75,11 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path):
     labels = None
     for j in range(M):
         labels_ = sim_labels(N, cpd)
-        feed_dict={cc.label_dict[k]:v for k,v in labels_.iteritems()}
-        feed_dict[trainer.batch_size]=N
-        images=sess.run(model.G,feed_dict)
+
+        # Input for CausalGAN
+        feed_dict = {cc.label_dict[k]: v for k, v in labels_.iteritems()}
+        feed_dict[trainer.batch_size] = N
+        images = sess.run(model.G, feed_dict)
 
         for i, image in enumerate(images):
             Image.fromarray(image.astype(np.uint8)).save(os.path.join(path, "images/image_{}.png".format("%06d" % (j*N + i))))

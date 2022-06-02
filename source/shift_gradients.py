@@ -183,9 +183,12 @@ class ShiftLossEstimator(torch.nn.Module):
         ss = sufficient_statistic(W=W)
         cond_cov = cov(loss_0, ss, Z=Z) 
         if self.s_grad is None:
+            # collapses (summing over) the first dimension
             out = torch.einsum("i...->...", cond_cov)
         else:
             s_grad_ = self.s_grad(Z=Z)
+            # First dimension ("i") is data, then matrix/vector  multiplication
+            # as in Theorem 1.
             out = torch.einsum("ijk, ik...->j...", s_grad_, cond_cov)
         return out
 
@@ -196,6 +199,7 @@ class ShiftLossEstimator(torch.nn.Module):
         else:
             mean_ss = cond_mean_given_binary(ss, Z)
         ss = ss - mean_ss
+        # Outer product
         ss = torch.einsum("ij,ik->ijk", ss, ss)
         cond_cov = cov(loss_0, ss, Z=Z)
         if self.s_hess is None:

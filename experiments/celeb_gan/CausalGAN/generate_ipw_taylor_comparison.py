@@ -13,9 +13,8 @@ import tensorflow as tf
 import glob
 import pickle
 import pandas as pd
-from main import get_trainer, main
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 DATA_PATH = '../data/train_dist'
 PATH_TRAIN = '../data/ipw_taylor_comparison/'
@@ -27,6 +26,10 @@ def sigmoid(x):
 
 
 def sim_labels(n, data, cpd, delta=None):
+    # Here, the shift can occur flexibly, so we cannot view the resulting
+    # distribution as a logistic regression model.  Hence, we compute the
+    # full conditional probability tables
+
     # Split the same way as IPW does
     children_sorted = sorted(data.drop("Male", axis=1).columns)
     splits = np.cumsum([2**len(cpd[child]['Parents']) for child in children_sorted])
@@ -51,7 +54,14 @@ def sim_labels(n, data, cpd, delta=None):
         if not defer:
             if parents:
                 d = len(parents)
-                groups = (np.matmul(np.array([labels[parent] for parent in parents_sorted]).T, np.array([2**j for j in range(d)])).astype(int))
+                # For a child with 3 parents, we have groups 0,...7
+                # Each child has a binary string of parents, e.g., (0, 1, 0)
+                # which we convert into an integer representation, e.g.,
+                # (1, 2, 4) * (0, 1, 0) = 2, where the first vector is 2**0,
+                # 2**1, 2**2, etc.
+                groups = (np.matmul(
+                    np.array([labels[parent] for parent in parents_sorted]).T,
+                    np.array([2**j for j in range(d)])).astype(int))
             else:
                 groups = np.zeros(n).astype(int)
             eta_obs = probs['Base'] + delta_child[groups] + np.sum([labels[parent]*parents[parent] for parent in parents_sorted], axis=0)                        
