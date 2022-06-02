@@ -66,10 +66,11 @@ for shift_strength in tqdm(np.linspace(0.0, 2.0, num=10)):
 
                 # Setup shift gradient
                 Sigma = torch.cov(W.T)
-                sle = ShiftLossEstimator(sufficient_statistic=lambda W: W@matrix_sqrt(Sigma, inverse=True))
+                sle = ShiftLossEstimator()
 
                 # Compute estimates of loss
-                loss_taylor = sle.forward(loss_0, W=W, delta=delta)
+                loss_taylor = sle.forward(loss_0, W=W,
+                        sufficient_statistic=lambda W: W@matrix_sqrt(Sigma, inverse=True), delta=delta)
                 loss_ipw = (loss_0 * weights(W, delta)).mean()
                 loss_ipw_cap = (loss_0 * weights(W, delta, cap=True)).mean()
                 loss_ = ((Y_ - model.predict(X_))**2).mean()

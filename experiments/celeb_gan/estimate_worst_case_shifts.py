@@ -1,5 +1,3 @@
-import numpy as np
-import time
 import pandas as pd
 import torchvision.models as models
 from tqdm import tqdm
@@ -89,7 +87,7 @@ def get_taylor(data, cpd):
         Z = None if not parents else torch.from_numpy(data[parents_sorted].values).float()
         Z_list.append(Z)
     
-    E_taylor = sle.forward(acc, W=W_list, Z=Z_list, shift_strength=args.shift_strength, worst_case_is_larger_loss=False).item()
+    E_taylor = sle.forward(acc, W=W_list, Z=Z_list, sufficient_statistic=sufficient_statistic, shift_strength=args.shift_strength, worst_case_is_larger_loss=False).item()
     delta_taylor = sle.delta.numpy().ravel()
 
     return E_taylor, delta_taylor
@@ -125,7 +123,7 @@ if __name__ == '__main__':
     batch_size = 256
 
     # Set up shift gradient
-    sle = ShiftLossEstimator(sufficient_statistic, grad_s, hess_s)
+    sle = ShiftLossEstimator(grad_s, hess_s)
 
     reps = np.arange(args.n_sims)
 
