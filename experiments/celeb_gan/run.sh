@@ -1,4 +1,6 @@
-# IMPORTANT: You may need to enable conda in bash script (https://github.com/conda/conda/issues/7980#issuecomment-441358406)
+# Enable conda in bash script 
+# (https://github.com/conda/conda/issues/7980)
+source $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 
 export LOAD_PATH="./logs/celebA_0527_120632"
 
@@ -11,8 +13,12 @@ cd ../../..
 conda activate shift_gradient
 python experiments/celeb_gan/train_model.py --num_epochs 25
 
+# ############################################################################
+# Figure 5 (Right): Simulate training data, estimate worst-case directions 
+# using Taylor and IPW, simulate data from worst-case direction, and evaluate
+# ############################################################################
 
-# Simulate training data, estimate worst-case directions using Taylor and IPW, simulate data from worst-case direction, and evaluate (Figure 5, right)
+# Simulate 100 training distributions
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
 python generate_ipw_taylor_comparison.py --n_sims 100 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 2
@@ -32,8 +38,12 @@ cd ../../..
 conda activate shift_gradient
 python experiments/celeb_gan/evaluate_worst_case_shifts.py
 
-## Simulate random shifts and compare to the worst-case shift identified (Figure 5, left)
-# Simulate random test environments
+# ############################################################################
+# Figure 5 (Left): Simulate random shifts and compare to the worst-case shift
+# identified by the taylor approximation
+# ############################################################################
+
+# Simulate random shifts and corresponding set of images
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
 python generate_random_shift_data_31_dim.py --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --n_random 400
