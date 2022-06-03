@@ -13,6 +13,8 @@ SAVE_PATH   = 'experiments/celeb_gan/compare_ipw_taylor_optim'
 MODEL_PATH  = 'experiments/celeb_gan/models/resnet_finetuned.pt'
 TRAIN_PATH = 'experiments/celeb_gan/data/train_dist/'
 RESULTS_PATH = 'experiments/celeb_gan/results/'
+if not os.path.exists(RESULTS_PATH):
+    os.mkdir(RESULTS_PATH)
 
 with open(os.path.join(TRAIN_PATH, 'cpd.pkl'), 'rb') as f:
     CPD_0 = pickle.load(f)
