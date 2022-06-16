@@ -53,7 +53,7 @@ To consider a shift in a conditional distribution `W|Z`, pass an input `Z`:
 
 ### Non-linear shift
 The default shift function is `s(Z; delta) = delta`. However, for more involved shifts, one can pass functions `s_grad` and `s_hess` to the `ShiftLossEstimator` class (not the forward function),  which return the gradient and Hessian of `s` when differentiated with respect to `delta`.
-- `s_grad`: Function which takes as input `Z` and outputs a `(n,d_delta,d_T)` dimensional array, for each sample point outputting the `(d_delta, d_T)` dimensional derivative of `s`, where `d_delta` is the number of parameters and `d_T` is the dimension of the sufficient statistic. For each row `(n,)`, `s_grad
+- `s_grad`: Function which takes as input `Z` and outputs a `(n,d_delta,d_T)` dimensional array, for each sample point outputting the `(d_delta, d_T)` dimensional derivative of `s`, where `d_delta` is the number of parameters and `d_T` is the dimension of the sufficient statistic. 
 - `s_hess`: Function which takes as input `Z` and outputs a `(n,d_delta,d_delta,d_T)` dimensional array, for each sample point outputting the `(d_delta, d_delta, d_T)` dimensional double derivative of `s` where `d_delta` is the number of parameters and `d_T` is the dimension of the sufficient statistic. 
 
 ### Cases when worst-case loss is larger
