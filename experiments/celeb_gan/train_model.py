@@ -14,6 +14,9 @@ META_PATH = 'experiments/celeb_gan/data/train_dist'
 MODEL_DIR = 'experiments/celeb_gan/models'
 MODEL_PATH = f'{MODEL_DIR}/resnet_finetuned.pt'
 
+if not os.path.exists(MODEL_DIR):
+    os.makedirs(MODEL_DIR)
+
 # Setups
 batch_size = 256
 device = "cuda"
