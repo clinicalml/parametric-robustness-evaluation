@@ -62,11 +62,9 @@ conda env create -f experiments/celeb_gan/conda_environments/environment_shift_g
 ```
 
 ## Fitting GAN
-Now, to train the CausalGAN model, run
+Now, to train the CausalGAN model, run the following.  Note that this can take >15hrs on a GPU.
 ```bash
-conda activate CausalGAN
-cd experiments/celeb_gan/CausalGAN
-python main.py --causal_model big_causal_graph --is_pretrain True --model_type began --is_train True --num_iter 250000
+bash experiments/celeb_gan/train_gan.sh
 ```
 
 ## Training model and evaluating accuracy under shift
