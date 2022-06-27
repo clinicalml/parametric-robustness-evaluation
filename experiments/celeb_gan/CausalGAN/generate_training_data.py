@@ -59,7 +59,8 @@ def shift(CPD, child, parent="Base", shift_size=0.0):
     CPD[child][parent] += shift_size
     return CPD
 
-def generate_data(sess, trainer, cc, model, N, M, cpd, path):
+def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None,
+        data=None, seed=None):
     # Ensure that path exists
     if not os.path.exists(os.path.join(path, 'images')):
         os.makedirs(os.path.join(path, 'images'))
@@ -68,6 +69,9 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path):
     files = glob.glob(path + '*.png')
     for f in files:
         os.remove(f)
+
+    if seed:
+        np.random.seed(seed)
 
     with open(os.path.join(path, 'cpd.pkl'), 'wb') as f:
         pickle.dump(cpd, f)
@@ -98,6 +102,7 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path):
 parser = argparse.ArgumentParser()
 parser.add_argument('--N', type=int, default=500)
 parser.add_argument('--M', type=int, default=40)
+parser.add_argument('--seed', type=int, default=0)
 
 if __name__ == "__main__":
     args = parser.parse_known_args()[0]
@@ -117,7 +122,7 @@ if __name__ == "__main__":
     main(trainer)
 
     # Generate data
-    generate_data(sess, trainer, cc, model, N, M, CPD_0, PATH)
+    generate_data(sess, trainer, cc, model, N, M, CPD_0, PATH, seed=args.seed)
 
     sess.close()
 

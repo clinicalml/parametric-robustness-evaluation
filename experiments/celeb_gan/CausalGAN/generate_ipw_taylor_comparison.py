@@ -71,7 +71,8 @@ def sim_labels(n, data, cpd, delta=None):
 
     return labels
 
-def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=None):
+def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None,
+        data=None, seed=None):
     # Ensure that path exists
     if not os.path.exists(os.path.join(path, 'images')):
         os.makedirs(os.path.join(path, 'images'))
@@ -80,6 +81,9 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=No
     files = glob.glob(path + '*.png')
     for f in files:
         os.remove(f)
+
+    if seed:
+        np.random.seed(seed)
 
     with open(os.path.join(path, 'cpd.pkl'), 'wb') as f:
         pickle.dump(cpd, f)
@@ -108,12 +112,16 @@ parser.add_argument('--load_deltas', type=bool, default=False)
 parser.add_argument('--M', type=int, default=2)
 parser.add_argument('--N', type=int, default=500)
 parser.add_argument('--n_sims', type=int, default=100)
+parser.add_argument('--seed', type=int, default=0)
+parser.add_argument('--seed_offset', type=int, default=10000)
 
 if __name__ == "__main__":
     args = parser.parse_known_args()[0]
     M = args.M
     N = args.N
     n_sims = args.n_sims
+    seed = args.seed
+    seed_offset = args.seed_offset
     
     # Initialize model
     trainer = get_trainer()
@@ -130,8 +138,11 @@ if __name__ == "__main__":
     if not args.load_deltas:
         print("Generating observational data")
         delta = np.zeros(31)
+        random_offset = 1 * seed_offset + seed
         for j in tqdm(range(n_sims)):
-            generate_data(sess, trainer, cc, model, N, M, CPD_0, os.path.join(PATH_TRAIN, 'random_{}'.format(j)), delta, data)
+            generate_data(sess, trainer, cc, model, N, M, CPD_0,
+                    os.path.join(PATH_TRAIN, 'random_{}'.format(j)), delta, data,
+                    seed=j+random_offset)
     else:
         print("Generating test data")
         # Load saved deltas
@@ -140,6 +151,8 @@ if __name__ == "__main__":
         df_other_results = pd.read_csv(os.path.join(SAVE_PATH, 'other_results.csv'))
 
 
+        ipw_offset = 2 * seed_offset + seed
+        taylor_offset = 3 * seed_offset + seed
         for j in tqdm(range(df_deltas_ipw.shape[0])):
             cpd = deepcopy(CPD_0)
             
@@ -147,16 +160,17 @@ if __name__ == "__main__":
             delta = df_deltas_ipw.iloc[j, 1:].values
             
             # Make shift table and generate data
-            generate_data(sess, trainer, cc, model, N, M, cpd, os.path.join(PATH_TEST, 'ipw_random_{}'.format(j)), delta, data)
+            generate_data(sess, trainer, cc, model, N, M, cpd,
+                    os.path.join(PATH_TEST, 'ipw_random_{}'.format(j)), delta,
+                    data, seed=j+ipw_offset)
 
             # Simulate random delta and normalize to unit ball
             delta = df_deltas_taylor.iloc[j, 1:].values
             
             # Make shift table and generate data
-            generate_data(sess, trainer, cc, model, N, M, cpd, os.path.join(PATH_TEST, 'taylor_random_{}'.format(j)), delta, data)
-
+            generate_data(sess, trainer, cc, model, N, M, cpd,
+                    os.path.join(PATH_TEST, 'taylor_random_{}'.format(j)), delta,
+                    data, seed=j+taylor_offset)
 
     
     sess.close()
-
-

@@ -92,11 +92,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--n_random', type=int, default=400)
 parser.add_argument('--N', type=int, default=500)
 parser.add_argument('--M', type=int, default=1)
+parser.add_argument('--seed', type=int, default=1)
 
 if __name__ == "__main__":
     args = parser.parse_known_args()[0]
     N = args.N
     M = args.M
+    seed = args.seed
     n_random = args.n_random
     
     # Initialize model
@@ -109,6 +111,8 @@ if __name__ == "__main__":
     
     # Load saved data (dummy, only to ensure right ordering of delta)
     data = pd.read_csv(os.path.join(DATA_PATH, 'labels.csv')).drop("file_path", axis=1)
+
+    np.random.seed(seed)
 
     for j in tqdm(range(n_random)):
         cpd = deepcopy(CPD_0)    

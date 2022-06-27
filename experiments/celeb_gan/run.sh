@@ -7,7 +7,7 @@ export LOAD_PATH="./logs/celebA_0527_120632"
 # Train model on simulated images
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_training_data.py --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began'
+python generate_training_data.py --seed 0 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began'
 cd ../../..
 
 conda activate shift_gradient
@@ -21,7 +21,7 @@ python experiments/celeb_gan/train_model.py --num_epochs 25
 # Simulate 100 training distributions
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_ipw_taylor_comparison.py --n_sims 100 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 2
+python generate_ipw_taylor_comparison.py --seed 2 --seed-offset 10000 --n_sims 100 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 2
 cd ../../..
 
 # For each training dataset, estimate worst-case direction using Taylor and IPW
@@ -46,7 +46,7 @@ python experiments/celeb_gan/evaluate_worst_case_shifts.py
 # Simulate random shifts and corresponding set of images
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_random_shift_data_31_dim.py --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --n_random 400
+python generate_random_shift_data_31_dim.py --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --n_random 400 --seed 1
 cd ../../..
 
 # Combine simulated test with estimated losses
