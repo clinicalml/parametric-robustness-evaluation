@@ -6,3 +6,5 @@ experiments/celeb_gan/CausalGAN/logs
 experiments/celeb_gan/data
 experiments/celeb_gan/models
 experiments/celeb_gan/variables
+experiments/celeb_gan/latex/figures
+experiments/celeb_gan/latex/tables
