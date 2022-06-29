@@ -56,7 +56,7 @@ def sim_labels(n, data, cpd, delta=None):
 
     return labels
 
-def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=None):
+def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=None, seed=None):
     # Ensure that path exists
     if not os.path.exists(os.path.join(path, 'images')):
         os.makedirs(os.path.join(path, 'images'))
@@ -66,15 +66,21 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None, data=No
     for f in files:
         os.remove(f)
 
+    if seed:
+        np.random.seed(seed)
+
     with open(os.path.join(path, 'cpd.pkl'), 'wb') as f:
         pickle.dump(cpd, f)
     
     labels = None
     for j in range(M):
         labels_ = sim_labels(N, data, cpd, delta)
-        feed_dict={cc.label_dict[k]:v for k,v in labels_.iteritems()}
-        feed_dict[trainer.batch_size]=N
-        images=sess.run(model.G,feed_dict)
+        if seed:
+            tf.set_random_seed(seed + 10000 * j)
+
+        feed_dict = {cc.label_dict[k]: v for k, v in labels_.iteritems()}
+        feed_dict[trainer.batch_size] = N
+        images = sess.run(model.G, feed_dict)
 
         for i, image in enumerate(images):
             Image.fromarray(image.astype(np.uint8)).save(os.path.join(path, "images/image_{}.png".format("%06d" % (j*N + i))))
@@ -100,9 +106,10 @@ if __name__ == "__main__":
     M = args.M
     seed = args.seed
     n_random = args.n_random
-    
+
     # Initialize model
-    trainer = get_trainer()
+    tf.set_random_seed(seed)
+    trainer = get_trainer(seed)
     sess = trainer.sess
     cc=trainer.cc
     if hasattr(trainer,'model'):
@@ -120,6 +127,6 @@ if __name__ == "__main__":
         delta = 2*delta / np.linalg.norm(delta)
 
         # Make shift table and generate data
-        generate_data(sess, trainer, cc, model, N, M, cpd, os.path.join(PATH, 'random_{}'.format(j)), delta, data)
+        generate_data(sess, trainer, cc, model, N, M, cpd, os.path.join(PATH, 'random_{}'.format(j)), delta, data, seed)
 
     sess.close()

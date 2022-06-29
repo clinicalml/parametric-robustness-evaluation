@@ -24,7 +24,7 @@ class DataLoader(object):
     For multiple gpu, the strategy here is to have 1 queue with 2xbatch_size
     then use tf.split within trainer.train()
     '''
-    def __init__(self,label_names,config):
+    def __init__(self,label_names,config,seed):
         self.label_names=label_names
         self.config=config
         self.scale_size=config.input_scale_size
@@ -34,6 +34,7 @@ class DataLoader(object):
         self.num_worker=config.num_worker
         self.is_crop=config.is_crop
         self.is_grayscale=config.grayscale
+        self.seed = seed
 
         attr_file= "{}/list_attr_celeba.csv".format(config.data_path)
         setattr(config,'attr_file',attr_file)
@@ -130,6 +131,7 @@ class DataLoader(object):
                 num_threads=num_preprocess_threads,
                 capacity=self.min_queue_examples + 3 * batch_size,
                 min_after_dequeue=self.min_queue_examples,
+                seed=self.seed
                 )
         return data_batch
 

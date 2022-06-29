@@ -3,11 +3,13 @@ import os
 import argparse
 import copy
 import torch
+import random
 from torch import nn
 from torch.utils.data import DataLoader
 import torchvision.models as models
 from tqdm import tqdm
 from experiments.celeb_gan.preprocessing import CelebADataset
+import numpy as np
 
 IMG_PATH = 'experiments/celeb_gan/data/train_dist/images'
 META_PATH = 'experiments/celeb_gan/data/train_dist'
@@ -108,8 +110,21 @@ def set_parameter_requires_grad(model, feature_extracting):
             param.requires_grad = False
 
 
-if __name__ == '__main__':
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
+
+if __name__ == "__main__":
     args = parser.parse_args()
+    torch.manual_seed(0)
+    g = torch.Generator()
+    g.manual_seed(0)
+    np.random.seed(0)
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+
     variables_path = os.path.join("experiments/celeb_gan/variables/", args.folder_name)
     if not os.path.exists(variables_path):
         os.makedirs(variables_path)
@@ -142,9 +157,11 @@ if __name__ == '__main__':
     splits = ['train', 'val', 'test']
     dataloaders = {split: DataLoader(dataset=ds, 
                           batch_size=batch_size,
+                          worker_init_fn=seed_worker,
+                          generator=g,
                           shuffle=False,
                           num_workers=16) for split, ds in dataset.get_splits(splits).items()}
-    
+
     model.to(device)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)

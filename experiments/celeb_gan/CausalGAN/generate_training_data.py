@@ -80,7 +80,9 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None,
     for j in range(M):
         labels_ = sim_labels(N, cpd)
 
-        # Input for CausalGAN
+        if seed:
+            tf.set_random_seed(seed + 10000 * j)
+
         feed_dict = {cc.label_dict[k]: v for k, v in labels_.iteritems()}
         feed_dict[trainer.batch_size] = N
         images = sess.run(model.G, feed_dict)
@@ -108,13 +110,16 @@ if __name__ == "__main__":
     args = parser.parse_known_args()[0]
     N = args.N
     M = args.M
+    seed = args.seed
+
     # First delete old images
     files = glob.glob(PATH + '*.png')
     for f in files:
         os.remove(f)
 
     # Initialize model
-    trainer = get_trainer()
+    tf.set_random_seed(seed)
+    trainer = get_trainer(seed)
     sess = trainer.sess
     cc=trainer.cc
     if hasattr(trainer,'model'):
@@ -122,7 +127,7 @@ if __name__ == "__main__":
     main(trainer)
 
     # Generate data
-    generate_data(sess, trainer, cc, model, N, M, CPD_0, PATH, seed=args.seed)
+    generate_data(sess, trainer, cc, model, N, M, CPD_0, PATH, seed=seed)
 
     sess.close()
 
