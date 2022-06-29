@@ -56,9 +56,16 @@ conda env create -f experiments/celeb_gan/conda_environments/environment_shift_g
 
 ## Training the GAN
 
-### Option 1: Retrain the GAN
+### Option 1: Use a pre-trained GAN
 
-First, download the data using the [kaggle API](https://github.com/Kaggle/kaggle-api). 
+This is the recommended approach, if you wish to reproduce our results. To unzip and use our pre-trained GAN, run the following.  Note that you will need to have the [kaggle API](https://github.com/Kaggle/kaggle-api) installed, which you can do via `pip install kaggle`.  This is due to a quirk in the original CausalGAN code, which will throw errors if the original data is not available.
+```bash
+bash experiments/celeb_gan/load_gan.sh
+```
+
+### Option 2: Retrain the GAN
+
+We do not recommend doing this, but we include instructions for completeness. First, download the data using the [kaggle API](https://github.com/Kaggle/kaggle-api). 
 ```bash
 cd experiments/celeb_gan
 mkdir -p CausalGAN/data/data/celebA
@@ -72,16 +79,9 @@ Now, to train the CausalGAN model, run the following.  Note that this can take >
 bash experiments/celeb_gan/train_gan.sh
 ```
 
-### Option 2: Use a pre-trained GAN
-
-To unzip and use our pre-trained GAN, run the following
-```bash
-bash experiments/celeb_gan/load_gan.sh
-```
-
 ## Training model and evaluating accuracy under shift
 
-The GAN is saved at a `LOAD_PATH` which looks something like `CausalGAN/logs/celebA_0101_010101`. To run the remaining code, update `LOAD_PATH` in [`run.sh`](some_bash_scripts/run.sh), with the timestamp relating to your model.  If you used "Option 2" above, this is already set to the correct timestamp.
+The GAN is saved at a `LOAD_PATH` which looks something like `CausalGAN/logs/celebA_0101_010101`. To run the remaining code, update `LOAD_PATH` in [`run.sh`](some_bash_scripts/run.sh), with the timestamp relating to your model.  If you used the recommended "Option 1" above, this is already set to the correct timestamp.
 
 Then a model can be trained, by running
 ```bash
