@@ -1,9 +1,8 @@
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(tidyverse)
 library(tikzDevice)
 use.tikz = T
 
-df <- read_csv("../compare_ipw_taylor_optim/results_with_ground_truth.csv")
+df <- read_csv("experiments/celeb_gan/compare_ipw_taylor_optim/results_with_ground_truth.csv")
 df$WorstTaylorMinusWorstIPW = df$`E_taylor actual` - df$`E_ipw actual`
 df$Worse = df$WorstTaylorMinusWorstIPW > 0
 
@@ -12,7 +11,7 @@ x.breaks =seq(-0.03, 0.02, length.out = 6)
 x.labels = paste0("\\scriptsize{$",100*x.breaks,".0\\%$}")
 
 # Setup tikz
-path = "../../../../shift_gradients_overleaf_clone/figures/celeba_compare_ipw_taylor_optim"
+path = "experiments/celeb_gan/latex/figures/figure5_right"
 if(use.tikz){tikz(file=paste0(path, ".tex"), width = 3.5, height = 1.2)}
 p <- ggplot(df, aes(x=df$WorstTaylorMinusWorstIPW, fill=Worse)) + 
   geom_histogram(aes(y=..count../sum(..count..)), breaks = seq(-0.03, 0.02, length.out=16)) +
