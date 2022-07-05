@@ -160,6 +160,7 @@ for a, b in [
     ("Young$=0$", "Old"),
     ("Young$=1$", "Young"),
     ("_", " "),
+    ("|", "&|"),
 ]:
     top_5["Conditional"] = [x.replace(a, b) for x in top_5["Conditional"]]
 
@@ -188,27 +189,36 @@ overall_original_acc = all_df["Training acc"].mean()
 median_df = pd.read_csv(
     os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_median.csv")
 )
-median_df.columns = ["Name", "Value"]
+median_df.columns = ["Name", "Exemplar"]
 median_df = median_df.set_index("Name")
 
 # Use the overall accuracy (more precise sense of accuracy pre-shift) rather than the
 # single training accuracy observed on the single validation example.
-median_df.loc["Training acc", :] = overall_original_acc
+median_df.loc["Training acc", :] = np.NaN
+
+# Join with the overall df to illustrate the effect over all 100 runs
+tab_df = pd.concat([median_df, all_df.mean(axis=0)], axis=1)
+tab_df.columns = ["Example", "Avg."]
 
 rename_maps = {
-    "Training acc": r"Acc. pre-shift ($\E[\ell_\gamma]$)",
-    "E_taylor actual": r"Acc. post-shift ($\E_\delta[\ell_\gamma]$)",
-    "IPW on Taylor": r"IS est. ($\ipw$)",
-    "E_taylor": r"Taylor est. ($\taylor$)",
+    "Training acc": r"Acc.\ pre-shift ($\E[\hat{Y} = Y]$)",
+    "E_taylor actual": r"Acc.\ post-shift ($\E_{\delta_{\text{Taylor}}}[\hat{Y} = Y]$)",
+    "IPW on Taylor": r"IS est. ($\hat{E}_{\delta_{\text{Taylor}}, \text{IS}}$)",
+    "E_taylor": r"Taylor est. ($\hat{E}_{\delta_{\text{Taylor}}, \text{Taylor}}$)",
+    "E_ipw actual": r"Acc.\ post-shift ($\E_{\delta_{\text{IS}}}[\hat{Y} = Y]$)",
+    "E_ipw": r"IS est. ($\hat{E}_{\delta_{\text{IS}}, \text{IS}}$)",
 }
 
-table1_right = median_df.loc[rename_maps.keys(), :].rename(index=rename_maps)
+table1_right = tab_df.loc[rename_maps.keys(), :].rename(index=rename_maps)
 
-table1_right.round(3).to_latex(
-    f"{DIR}/latex/tables/table1_right.tex",
-    index=False,
-    escape=False,
-)
+with pd.option_context("max_colwidth", 1000):
+    table1_right.round(3).to_latex(
+        f"{DIR}/latex/tables/table1_right.tex",
+        index=True,
+        header=True,
+        escape=False,
+        na_rep="",
+    )
 
 ###############################################################
 # Comparison to random shift
