@@ -42,9 +42,11 @@ df['E_taylor actual'] = accs_taylor
 df.to_csv(os.path.join(SAVE_PATH, 'results_with_ground_truth.csv'), index=False)
 df.to_csv(os.path.join(RESULTS_PATH, 'figure5_right.csv'), index=False)
 
-# Save first row for table
-df.loc[0,:].to_csv(os.path.join(SAVE_PATH, 'results_with_ground_truth_first.csv'))
-df.loc[0,:].to_csv(os.path.join(RESULTS_PATH, 'table1_right.csv'))
+# Save the shift with median test accuracy
+# for odd counts, this gives the median index, otherwise rounds up to get a valid index
+mid = round((n_random - 1) / 2)
+idx_median, val_median = df['E_taylor actual'].sort_values().reset_index().iloc[mid, :]
+df.loc[idx_median,:].to_csv(os.path.join(SAVE_PATH, 'results_with_ground_truth_median.csv'))
 
 # Print the worst-case random delta
 print(f"IPW error: {(df['E_ipw actual'] - df['E_ipw']).abs().mean():.3f}")

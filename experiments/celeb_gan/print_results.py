@@ -50,13 +50,25 @@ def get_delta_names(cpd):
 
 
 ###############################################################
-# Table 3
+# Table 3: Get the full shift for the delta with median test accuracy
 ###############################################################
 
 # Give details on the initial delta
-delta_0 = pd.read_csv(f"{DIR}/compare_ipw_taylor_optim/deltas_taylor.csv")
-delta_0 = delta_0.drop("Unnamed: 0", axis=1)
-delta_0 = delta_0.iloc[0, :]
+deltas = pd.read_csv(f"{DIR}/compare_ipw_taylor_optim/deltas_taylor.csv")
+deltas = deltas.drop("Unnamed: 0", axis=1)
+
+RESULTS_PATH = "experiments/celeb_gan/results/"
+LOAD_OURS_PATH = "experiments/celeb_gan/compare_ipw_taylor_optim"
+
+all_df = pd.read_csv(
+    os.path.join(LOAD_OURS_PATH, "results_with_ground_truth.csv")
+).drop(["Unnamed: 0"], axis=1)
+
+mid = round((all_df.shape[0] - 1) / 2)
+idx_median, val_median = (
+    all_df["E_taylor actual"].sort_values().reset_index().iloc[mid, :]
+)
+delta_median = deltas.iloc[int(idx_median), :]
 
 with open(f"{DIR}/data/train_dist/cpd.pkl", "rb") as f:
     cpd = pickle.load(f)
@@ -67,7 +79,10 @@ DELTA_NAME = r"$\delta_i$"
 # Print the entire set of conditionals
 table_3_df = pd.DataFrame(
     np.concatenate(
-        [np.array(get_delta_names(cpd))[:, np.newaxis], delta_0.values[:, np.newaxis]],
+        [
+            np.array(get_delta_names(cpd))[:, np.newaxis],
+            delta_median.values[:, np.newaxis],
+        ],
         axis=1,
     ),
     columns=["Conditional", DELTA_NAME],
@@ -98,39 +113,37 @@ top_5 = table_3_sorted[:5]
 
 etas = np.zeros((5))
 # WARNING: Manual calculation of the CPD, using the ground-truth statistics
-cpd_mustache = cpd["Mustache"]
-cpd_smiling = cpd["Smiling"]
 cpd_bald = cpd["Bald"]
 cpd_lipstick = cpd["Wearing_Lipstick"]
-# Mustace | Female, Old
+# Bald | Female, Old
 etas[0] = (
-    cpd_mustache["Base"]
-    + 0 * cpd_mustache["Parents"]["Male"]
-    + 0 * cpd_mustache["Parents"]["Young"]
-)
-# Lipstick | Male, Young
-etas[1] = (
-    cpd_lipstick["Base"]
-    + 1 * cpd_lipstick["Parents"]["Male"]
-    + 1 * cpd_lipstick["Parents"]["Young"]
+    cpd_bald["Base"]
+    + 0 * cpd_bald["Parents"]["Male"]
+    + 0 * cpd_bald["Parents"]["Young"]
 )
 # Bald | Male, Young
-etas[2] = (
+etas[1] = (
     cpd_bald["Base"]
     + 1 * cpd_bald["Parents"]["Male"]
     + 1 * cpd_bald["Parents"]["Young"]
 )
-# Lipstick | Male, Old
+# Bald | Male, Old
+etas[2] = (
+    cpd_bald["Base"]
+    + 1 * cpd_bald["Parents"]["Male"]
+    + 0 * cpd_bald["Parents"]["Young"]
+)
+# Lipstick | Female, Young
 etas[3] = (
     cpd_lipstick["Base"]
-    + 1 * cpd_lipstick["Parents"]["Male"]
-    + 0 * cpd_lipstick["Parents"]["Young"]
+    + 0 * cpd_lipstick["Parents"]["Male"]
+    + 1 * cpd_lipstick["Parents"]["Young"]
 )
-# Smiling | Female, Old
+# Lipstick | Female, Old
 etas[4] = (
-    cpd_smiling["Base"]
-    + 0 * cpd_smiling["Parents"]["Male"]
-    + 0 * cpd_smiling["Parents"]["Young"]
+    cpd_lipstick["Base"]
+    + 0 * cpd_lipstick["Parents"]["Male"]
+    + 0 * cpd_lipstick["Parents"]["Young"]
 )
 top_5[r"$\P$"] = [
     np.round(sigmoid(eta), 3)
@@ -160,18 +173,36 @@ top_5.round(3).to_latex(
 # Table 1, right
 ###############################################################
 
-df0 = pd.read_csv(f"{DIR}/results/table1_right.csv")
-df0.columns = ["Name", "Value"]
-df0 = df0.drop(0, axis=0)
+# Ground truth training accuracy is calculated over all 100 validation sets, to provide
+# more precision.  The estimates (from IS and Taylor) are just from the single
+# validation set used to derive the shift, and the "Accuracy after shift" is computed
+# from a single simulation of 5000 samples.
+LOAD_OURS_PATH = "experiments/celeb_gan/compare_ipw_taylor_optim"
+
+all_df = pd.read_csv(
+    os.path.join(LOAD_OURS_PATH, "results_with_ground_truth.csv")
+).drop(["Unnamed: 0"], axis=1)
+
+overall_original_acc = all_df["Training acc"].mean()
+
+median_df = pd.read_csv(
+    os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_median.csv")
+)
+median_df.columns = ["Name", "Value"]
+median_df = median_df.set_index("Name")
+
+# Use the overall accuracy (more precise sense of accuracy pre-shift) rather than the
+# single training accuracy observed on the single validation example.
+median_df.loc["Training acc", :] = overall_original_acc
 
 rename_maps = {
-    "E_taylor actual": r"Ground truth shift acc. ($\E_\delta[\ell_\gamma]$)",
-    "Training acc": r"(Original acc ($\E[\ell_\gamma]$))",
-    "IPW on Taylor": r"IPW estimate ($\ipw$)",
-    "E_taylor": r"Taylor estimate ($\taylor$)",
+    "Training acc": r"Acc. pre-shift ($\E[\ell_\gamma]$)",
+    "E_taylor actual": r"Acc. post-shift ($\E_\delta[\ell_\gamma]$)",
+    "IPW on Taylor": r"IS est. ($\ipw$)",
+    "E_taylor": r"Taylor est. ($\taylor$)",
 }
 
-table1_right = df0.set_index("Name").T[rename_maps.keys()].rename(columns=rename_maps)
+table1_right = median_df.loc[rename_maps.keys(), :].rename(index=rename_maps)
 
 table1_right.round(3).to_latex(
     f"{DIR}/latex/tables/table1_right.tex",
@@ -187,11 +218,11 @@ RESULTS_PATH = "experiments/celeb_gan/results/"
 LOAD_OURS_PATH = "experiments/celeb_gan/compare_ipw_taylor_optim"
 
 df_rand = pd.read_csv(os.path.join(RESULTS_PATH, "figure5_left.csv"))
-worst_case_df = pd.read_csv(
-    os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_first.csv")
+median_df = pd.read_csv(
+    os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_median.csv")
 )
-worst_case_df.index = worst_case_df["Unnamed: 0"]
-number_worse = (df_rand["Loss"] > worst_case_df.loc["E_taylor actual"][1]).mean()
+median_df.index = median_df["Unnamed: 0"]
+number_worse = (df_rand["Loss"] > median_df.loc["E_taylor actual"][1]).mean()
 
 print("EVALUTION AGAINST RANDOM SHIFTS")
 print(

@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print(df.round(3))
 
     # Print the worst-case random delta
-    worst_case_df = pd.read_csv(os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_first.csv"))
+    worst_case_df = pd.read_csv(os.path.join(LOAD_OURS_PATH, "results_with_ground_truth_median.csv"))
     worst_case_df.index = worst_case_df['Unnamed: 0']
     number_worse = (df['Loss'] > worst_case_df.loc['E_taylor actual'][1]).mean()
     

@@ -6,7 +6,7 @@ options(tikzLatexPackages
 use.tikz = T
 
 df <- read_csv("experiments/celeb_gan/plots/random_acc31.csv")
-ours.df <- read_csv("experiments/celeb_gan/compare_ipw_taylor_optim/results_with_ground_truth_first.csv", skip=1, col_names=FALSE)
+ours.df <- read_csv("experiments/celeb_gan/compare_ipw_taylor_optim/results_with_ground_truth_median", skip=1, col_names=FALSE)
 ours <- ours.df[ours.df$X1 == "E_taylor actual",]$X2
 
 
