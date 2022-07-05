@@ -201,11 +201,11 @@ tab_df = pd.concat([median_df, all_df.mean(axis=0)], axis=1)
 tab_df.columns = ["Example", "Avg."]
 
 rename_maps = {
-    "Training acc": r"Acc.\ pre-shift ($\E[\hat{Y} = Y]$)",
-    "E_taylor actual": r"Acc.\ post-shift ($\E_{\delta_{\text{Taylor}}}[\hat{Y} = Y]$)",
+    "Training acc": r"Acc.\ pre-shift ($\E[\mathbf{1}\{f(X) = Y\}]$)",
+    "E_taylor actual": r"Acc.\ post-shift ($\E_{\delta_{\text{Taylor}}}[\mathbf{1}\{f(X) = Y\}]$)",
     "IPW on Taylor": r"IS est. ($\hat{E}_{\delta_{\text{Taylor}}, \text{IS}}$)",
     "E_taylor": r"Taylor est. ($\hat{E}_{\delta_{\text{Taylor}}, \text{Taylor}}$)",
-    "E_ipw actual": r"Acc.\ post-shift ($\E_{\delta_{\text{IS}}}[\hat{Y} = Y]$)",
+    "E_ipw actual": r"Acc.\ post-shift ($\E_{\delta_{\text{IS}}}[\mathbf{1}\{f(X) = Y\}]$)",
     "E_ipw": r"IS est. ($\hat{E}_{\delta_{\text{IS}}, \text{IS}}$)",
 }
 
