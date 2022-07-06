@@ -43,10 +43,29 @@ python experiments/labtest_figures/figures10_11.py
 which will produce 6 figures in total.  The first three are `figs/labtest_subpopulation_worst_case_alpha[0.4,0.6,0.8].pdf`, and make up Figure 10, and the second three are `labtest_user_story_[0,1,2].pdf` and make up Figure 11.
 
 # Celeb A (Section 4.2)
-Reproducing the CausalGAN experiment takes a substantial amount of time, primarily in training the original GAN.
 
-## Downloading data
-First, download the data using the [kaggle API](https://github.com/Kaggle/kaggle-api). 
+Reproducing the CausalGAN experiment takes a substantial amount of time, primarily in training the original GAN. Note that retraining the GAN will not, in general, reproduce the results in the paper, due to difficulties in controlling randomness in the original CausalGAN code.  However, we also provide the option to use the trained GAN corresponding to the results in the paper.
+
+## Setting up environments
+
+The [CausalGAN](https://github.com/mkocaoglu/CausalGAN) code is (unfortunately) in Python 2, while our code is Python 3. To manage, we have two separate conda environments. To install them, run
+```bash
+conda env create -f experiments/celeb_gan/conda_environments/environment_CausalGAN.yml
+conda env create -f experiments/celeb_gan/conda_environments/environment_shift_gradient.yml
+```
+
+## Training the GAN
+
+### Option 1: Use a pre-trained GAN
+
+This is the recommended approach, if you wish to reproduce our results. To unzip and use our pre-trained GAN, run the following.  Note that you will need to have the [kaggle API](https://github.com/Kaggle/kaggle-api) installed, which you can do via `pip install kaggle`.  This is due to a quirk in the original CausalGAN code, which will throw errors if the original data is not available.
+```bash
+bash experiments/celeb_gan/load_gan.sh
+```
+
+### Option 2: Retrain the GAN
+
+We do not recommend doing this, but we include instructions for completeness. First, download the data using the [kaggle API](https://github.com/Kaggle/kaggle-api). 
 ```bash
 cd experiments/celeb_gan
 mkdir -p CausalGAN/data/data/celebA
@@ -55,23 +74,25 @@ kaggle datasets download jessicali9530/celeba-dataset --unzip
 cd ../../../../../..
 ```
 
-The [CausalGAN](https://github.com/mkocaoglu/CausalGAN) code is (unfortunately) in Python 2, while our code is Python 3. To manage, we have two separate conda environments. To install them, run
-```bash
-conda env create -f experiments/celeb_gan/conda_environments/environment_CausalGAN.yml
-conda env create -f experiments/celeb_gan/conda_environments/environment_shift_gradient.yml
-```
-
-## Fitting GAN
 Now, to train the CausalGAN model, run the following.  Note that this can take >15hrs on a GPU.
 ```bash
 bash experiments/celeb_gan/train_gan.sh
 ```
 
 ## Training model and evaluating accuracy under shift
-The GAN is saves at a `LOAD_PATH` which looks something like `CausalGAN/logs/celebA_0101_010101`. To run the remaining code, update `LOAD_PATH` in [`run.sh`](some_bash_scripts/run.sh), with the timestamp relating to your model. 
+
+The GAN is saved at a `LOAD_PATH` which looks something like `CausalGAN/logs/celebA_0101_010101`. To run the remaining code, update `LOAD_PATH` in [`run.sh`](some_bash_scripts/run.sh), with the timestamp relating to your model.  If you used the recommended "Option 1" above, this is already set to the correct timestamp.
 
 Then a model can be trained, by running
 ```bash
 bash experiments/celeb_gan/run.sh
 ```
 The csv files containing results are saved in `experiments/celeb_gan/results`.
+
+## Producing the tables / figures
+
+Once all of the above has been run, you can produce the tables and figures using the following command.  **NOTE**: You will need to create a new conda environment called `rplots` that has R installed, along with the `tidyverse` and `tikzDevice` packages, and `latex` installed and available on your path.
+```bash
+bash experiments/celeb_gan/make_tables_figures.sh
+```
+

@@ -91,6 +91,9 @@ def generate_data(sess, trainer, cc, model, N, M, cpd, path, delta=None,
     labels = None
     for j in range(M):
         labels_ = sim_labels(N, data, cpd, delta)
+        if seed:
+            tf.set_random_seed(seed + 10000 * j)
+
         feed_dict={cc.label_dict[k]:v for k,v in labels_.iteritems()}
         feed_dict[trainer.batch_size]=N
         images=sess.run(model.G,feed_dict)
@@ -113,7 +116,7 @@ parser.add_argument('--M', type=int, default=2)
 parser.add_argument('--N', type=int, default=500)
 parser.add_argument('--n_sims', type=int, default=100)
 parser.add_argument('--seed', type=int, default=0)
-parser.add_argument('--seed_offset', type=int, default=10000)
+parser.add_argument('--seed_offset', type=int, default=100000)
 
 if __name__ == "__main__":
     args = parser.parse_known_args()[0]
@@ -124,7 +127,8 @@ if __name__ == "__main__":
     seed_offset = args.seed_offset
     
     # Initialize model
-    trainer = get_trainer()
+    tf.set_random_seed(seed)
+    trainer = get_trainer(seed)
     sess = trainer.sess
     cc=trainer.cc
     if hasattr(trainer,'model'):

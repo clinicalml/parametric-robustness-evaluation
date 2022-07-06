@@ -18,11 +18,12 @@ tf.get_logger().setLevel('ERROR')
 
 class Trainer(object):
 
-    def __init__(self, config, cc_config, model_config=None):
+    def __init__(self, config, cc_config, model_config=None, seed=None):
         self.config=config
         self.cc_config=cc_config
         self.model_dir = config.model_dir
         self.cc_config.model_dir=config.model_dir
+        self.seed = seed
 
         self.model_config=model_config
         if self.model_config:
@@ -55,7 +56,7 @@ class Trainer(object):
 
         #Data
         print('setting up data')
-        self.data=DataLoader(self.cc.label_names,config)
+        self.data=DataLoader(self.cc.label_names,config,self.seed)
 
         if self.cc_config.is_pretrain or self.config.build_pretrain:
             print('setup pretrain')

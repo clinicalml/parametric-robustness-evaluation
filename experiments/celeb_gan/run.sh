@@ -2,7 +2,11 @@
 # (https://github.com/conda/conda/issues/7980)
 source $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 
-export LOAD_PATH="./logs/celebA_0527_120632"
+REPO_ROOT="."
+export PYTHONPATH="${PYTHONPATH}:${REPO_ROOT}"
+
+export CUBLAS_WORKSPACE_CONFIG=":4096:8"  # https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+export LOAD_PATH="./logs/celebA_0626_143301"
 
 # Train model on simulated images
 conda activate CausalGAN
@@ -21,17 +25,17 @@ python experiments/celeb_gan/train_model.py --num_epochs 25
 # Simulate 100 training distributions
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_ipw_taylor_comparison.py --seed 2 --seed-offset 10000 --n_sims 100 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 2
+python generate_ipw_taylor_comparison.py --seed 2 --seed-offset 100000 --n_sims 100 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 2
 cd ../../..
 
-# For each training dataset, estimate worst-case direction using Taylor and IPW
+# # For each training dataset, estimate worst-case direction using Taylor and IPW
 conda activate shift_gradient
 python experiments/celeb_gan/estimate_worst_case_shifts.py --n_sims 100
 
 # Simulate data from worst-case directions
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_ipw_taylor_comparison.py --load_deltas True --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 10
+python generate_ipw_taylor_comparison.py --seed 3 --load_deltas True --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --M 10
 cd ../../..
 
 # Evaluate data from worst-case directions
@@ -46,7 +50,7 @@ python experiments/celeb_gan/evaluate_worst_case_shifts.py
 # Simulate random shifts and corresponding set of images
 conda activate CausalGAN
 cd experiments/celeb_gan/CausalGAN  
-python generate_random_shift_data_31_dim.py --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --n_random 400 --seed 1
+python generate_random_shift_data_31_dim.py --seed 1 --causal_model big_causal_graph --load_path $LOAD_PATH --model_type 'began' --n_random 400
 cd ../../..
 
 # Combine simulated test with estimated losses

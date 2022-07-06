@@ -1,5 +1,6 @@
 from __future__ import print_function
 import numpy as np
+import argparse
 import os
 import tensorflow as tf
 
@@ -20,7 +21,7 @@ from causal_dcgan import CausalGAN
 from IPython.core import debugger
 debug = debugger.Pdb().set_trace
 
-def get_trainer():
+def get_trainer(seed):
     print('tf: resetting default graph!')
     tf.reset_default_graph()#for repeated calls in ipython
 
@@ -40,7 +41,7 @@ def get_trainer():
 
     ###SEEDS###
     np.random.seed(config.seed)
-    #tf.set_random_seed(config.seed) # Not working right now.
+    tf.set_random_seed(seed)
 
     prepare_dirs_and_logger(config)
     if not config.load_path:
@@ -71,7 +72,7 @@ def get_trainer():
     cc_config.graph=get_causal_graph(config.causal_model)
 
     #Builds and loads specified models:
-    trainer=Trainer(config,cc_config,model_config)
+    trainer=Trainer(config,cc_config,model_config,seed=seed)
     return trainer
 
 def main(trainer):
@@ -83,10 +84,16 @@ def main(trainer):
         if trainer.model_config.is_train:
             trainer.train_loop()
 
-if __name__ == "__main__":
-    trainer=get_trainer()
+parser = argparse.ArgumentParser()
+parser.add_argument('--seed', type=int, default=0)
 
-    #make ipython easier
+if __name__ == "__main__":
+    args = parser.parse_known_args()[0]
+    seed = args.seed
+
+    # Initialize model
+    tf.set_random_seed(seed)
+    trainer = get_trainer(seed)
     sess=trainer.sess
     cc=trainer.cc
     if hasattr(trainer,'model'):
